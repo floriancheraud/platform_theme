@@ -5,9 +5,27 @@
     <div class="title">
         <a href="https://platform-0.com/gallery/"><b>PLATFORM</b></a><span id="sequence"></span>
     </div>
-    <div class="switch">
-        <?php echo date("ymd"); ?>
-    </div>
+	<?php
+	// Fetch a random post
+	$args = array(
+		'post_type' => 'post', // Adjust if you have custom post types
+		'posts_per_page' => 1,
+		'orderby' => 'rand'
+	);
+	$query_random_post = new WP_Query($args);
+
+	if ($query_random_post->have_posts()) {
+		$query_random_post->the_post();
+		$random_post_url = get_permalink();
+		wp_reset_postdata(); // Always reset post data after a custom query
+	} else {
+		$random_post_url = ''; // Fallback URL, can be home or any other page
+	}
+	?>
+
+	<div class="switch" data-random-post-url="<?php echo esc_url($random_post_url); ?>">
+		<?php echo date("ymd"); ?>
+	</div>
 </div>
 
 
@@ -157,4 +175,14 @@ jQuery(document).ready(function ($) {
 </script>
 
 
-<?php get_footer(); ?>
+<script>
+	jQuery(document).ready(function ($) {
+    // Click event for the date div
+    $('.switch').click(function () {
+        var randomPostUrl = $(this).data('random-post-url');
+        if (randomPostUrl) {
+            window.location.href = randomPostUrl; // Redirect to the random post
+        }
+    });
+});
+</script>
