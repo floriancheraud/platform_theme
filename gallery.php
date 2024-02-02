@@ -64,7 +64,7 @@ Template Name: Gallery
 
 <div id="bar_footer">
     <div class="subtitle_footer">
-        <a id="search-button">Search</a>
+        <a id="search-button"></a> <!-- delete search function in gallery for now 240202-->
         <form id="search-form" action="<?php echo home_url('/gallery/'); ?>" method="get">
     		<input type="hidden" name="gallery_search" value="1">
             <input type="text" name="s" placeholder="Type and press enter to search...">
