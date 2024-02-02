@@ -18,47 +18,47 @@ Template Name: Gallery
 
 <div id="gallery">
 <div id="images-grid">
-	<?php
-	// Retrieve the search term from the query variable 's'
-	$search_term = get_query_var('s');
+    <?php
+    // Initialize image count
+    $total_images_count = 0;
 
-	// Define the query arguments
-	$query_args = array(
-		'post_type' => 'post',
-		'posts_per_page' => -1,
-		'orderby' => 'date', // You can change this to 'rand' for random order if preferred
-	);
+    // Existing code for retrieving posts
+    $search_term = get_query_var('s');
+    $query_args = array(
+        'post_type' => 'post',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+    );
+    if (!empty($search_term)) {
+        $query_args['s'] = $search_term;
+    }
+    $query_all_posts = new WP_Query($query_args);
 
-	// If there's a search term, modify the query to filter by it
-	if (!empty($search_term)) {
-		$query_args['s'] = $search_term;
-	}
+    // Loop through posts
+    if ($query_all_posts->have_posts()) :
+        while ($query_all_posts->have_posts()) : $query_all_posts->the_post();
+            $post_content = get_the_content();
+            $post_images = get_images_from_content($post_content);
 
-	// The WP_Query
-	$query_all_posts = new WP_Query($query_args);
+            if ($post_images) :
+                foreach ($post_images as $image) :
+                    // Increment the image count
+                    $total_images_count++;
+                    ?>
+                    <div class="grid-item">
+                        <a href="<?php the_permalink(); ?>">
+                            <img src="<?php echo $image; ?>" alt="" loading="lazy">
+                        </a>
+                    </div>
+                <?php endforeach;
+            endif;
 
-	if ($query_all_posts->have_posts()) :
-		while ($query_all_posts->have_posts()) : $query_all_posts->the_post();
-
-			$post_content = get_the_content();
-			$post_images = get_images_from_content($post_content);
-
-			if ($post_images) :
-				foreach ($post_images as $image) : ?>
-					<div class="grid-item">
-						<a href="<?php the_permalink(); ?>">
-							<img src="<?php echo $image; ?>" alt="" loading="lazy">
-						</a>
-					</div>
-				<?php endforeach;
-			endif;
-
-		endwhile;
-		wp_reset_postdata();
-	else :
-		echo 'No images found';
-	endif;
-	?>
+        endwhile;
+        wp_reset_postdata();
+    else :
+        echo 'No images found';
+    endif;
+    ?>
 </div>
 </div>
 
@@ -71,31 +71,8 @@ Template Name: Gallery
         </form>
     </div>
     <div class="counter_header">
-        <?php
-        // Check if there is a search query
-        $search_query = get_search_query();
-        $args = array();
-
-        if (!empty($search_query)) {
-            $args['s'] = $search_query; // Add search query to arguments
-        }
-
-        // The Query
-        $query = new WP_Query($args);
-
-        // Get the total number of posts
-        $total_posts = wp_count_posts()->publish;
-
-        if ($query->have_posts()) :
-            $displayed_posts = $query->found_posts;
-            echo "<span id='displayed-posts' class='displayed-posts'>$displayed_posts/</span><span id='total-posts' class='total-posts'>$total_posts</span>";
-        else :
-            // If no search query, display all posts
-            $displayed_posts = $total_posts;
-            echo "<span id='displayed-posts' class='displayed-posts'>$displayed_posts/</span><span id='total-posts' class='total-posts'>$total_posts</span>";
-        endif;
-        ?>
-    </div>
+		<?php echo $total_images_count; ?>
+	</div>
 </div>
 
 <script>
