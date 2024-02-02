@@ -1,0 +1,243 @@
+/*
+Theme Name: Platform2024
+Theme URI: http://platform-0.com
+Author: Florian Cheraud
+Author URI: http://floriancheraud.com
+Description: Platform2024
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+html {
+    background-color: #F7F7F7;
+}
+
+
+body {
+    margin: 1em;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 11pt;
+    line-height: 1.5em;
+}
+
+
+
+
+
+
+div#bar_header {
+    border-bottom: 1px solid #000;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 1em; 
+	right: 1em;
+	left: 1em;
+    background-color: #F7F7F7;
+    z-index: 5;
+}
+
+
+div#bar_footer {
+    border-top: 1px solid #000;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 1em; 
+	right: 1em;
+	left: 1em;
+    background-color: #F7F7F7;
+    z-index: 5;
+}
+
+div.title {
+	overflow: hidden;
+	max-height: 1.5em;
+}
+
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+    background-color: black;
+    cursor: pointer;
+}
+
+a.loop_single_post_link:visited {
+	color: #D9D9D9;
+}
+
+/* LOOP */
+
+div#loop {
+    display: block;
+    top: 1.5em; /* line height */
+    position: relative;
+    text-align: justify;
+    height: calc(100vh - 5em); /* height = viewport height - (bar_header + bar_footer) */
+    overflow: auto; 
+}
+
+.loop_single_post_title {
+    display: inline;
+}
+
+
+/* GALLERY */
+
+div#gallery {
+    display: block;
+    top: 1.5em; /* line height */
+    position: relative;
+    overflow: auto; 
+	height: calc(100vh - 5em);
+}
+
+div#images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-gap: 1em;
+}
+
+.grid-item {
+    overflow: hidden;
+}
+.grid-item img {
+    width: 100%;
+    height: auto;
+    transition: transform 1s ease;
+}
+.grid-item:hover img {
+    transform: none;
+}
+
+img {
+	background: #F0F0F0;
+}
+
+
+
+#post_container {
+    display: flex;
+    position: relative;
+    top: 1.5em; /* line height */
+    justify-content: space-between;
+    height: calc(100vh - 2.5em); /* height = viewport height - bar_header */
+    overflow: auto; 
+    z-index: 2;
+}
+
+
+.post_content_left {
+    width: 50%;
+    margin-top: 0.5em;
+    margin-right: 0.5em;
+}
+.post_content_left p {
+    display: none;
+}
+.post_content_left * {
+    max-width: 100%
+}
+
+.post_content_right {
+    width: 50%;
+    margin-top: 0.5em;
+    margin-left: 0.5em;
+}
+
+.post_content_right * {
+    max-width: 100%;
+    display: none; /* hide all first then show only <p> */
+}
+.post_content_right p, .post_content_right a {
+    display: block;
+}
+
+
+
+/* SEARCH */
+
+#search-button.active {
+    display: none;
+}
+
+#bar_footer.active {
+    background-color: black;
+}
+
+#displayed-posts.active, #total-posts.active {
+    color: white;
+}
+
+
+#search-form, #search-form:hover, #search-form:focus {
+    display: none;
+}
+
+.search a {
+    text-decoration: none;
+    cursor: pointer; /* Add pointer cursor to indicate interactivity */
+}
+
+#search-form input[type="text"], #search-form input[type="text"]:hover, #search-form input[type="text"]:focus {
+    width: 50vw;
+    border: none;
+    background-color: black;
+    outline: none;
+    caret-color: white;
+    color: white;
+}
+
+
+
+span.displayed-posts {
+    color: #F7F7F7;
+}
+
+span.total-posts {
+    color: black;
+}
+
+
+
+
+
+
+/* Standard syntax for most modern browsers */
+::selection {
+    color: white;
+    background: black;
+}
+
+/* Mozilla-specific syntax */
+::-moz-selection {
+    color: white;
+    background: black;
+}
+
+
+@media (max-width: 1024px) { /* ipad pro is max 1024px */
+    /* Styles for devices within this screen width range */
+}
+
+
+/* Styles for screens in portrait orientation */
+@media (max-width: 2100px) and (orientation: portrait) { /* ipad pro is max 2048px */
+    .post_content_right, .post_content_left {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #post_container {
+    display: block;
+    justify-content: none;
+    }
+}
