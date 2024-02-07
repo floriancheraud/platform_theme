@@ -5,27 +5,27 @@
     <div class="title">
         <a href="https://platform-0.com/gallery/"><b>PLATFORM</b></a><span id="sequence"></span>
     </div>
-	<?php
-	// Fetch a random post
-	$args = array(
-		'post_type' => 'post', // Adjust if you have custom post types
-		'posts_per_page' => 1,
-		'orderby' => 'rand'
-	);
-	$query_random_post = new WP_Query($args);
+    <?php
+    // Fetch a random post
+    $args = array(
+        'post_type' => 'post', // Adjust if you have custom post types
+        'posts_per_page' => 1,
+        'orderby' => 'rand'
+    );
+    $query_random_post = new WP_Query($args);
 
-	if ($query_random_post->have_posts()) {
-		$query_random_post->the_post();
-		$random_post_url = get_permalink();
-		wp_reset_postdata(); // Always reset post data after a custom query
-	} else {
-		$random_post_url = ''; // Fallback URL, can be home or any other page
-	}
-	?>
+    if ($query_random_post->have_posts()) {
+        $query_random_post->the_post();
+        $random_post_url = get_permalink();
+        wp_reset_postdata(); // Always reset post data after a custom query
+    } else {
+        $random_post_url = ''; // Fallback URL, can be home or any other page
+    }
+    ?>
 
-	<div class="switch" data-random-post-url="<?php echo esc_url($random_post_url); ?>">
-		<?php echo date("ymd"); ?>
-	</div>
+    <div class="switch" data-random-post-url="<?php echo esc_url($random_post_url); ?>">
+        <?php echo date("ymd"); ?>
+    </div>
 </div>
 
 
@@ -33,44 +33,36 @@
     <?php
     // Check if there is a search query
     $search_query = get_search_query();
-    $args = array();
+    $args = array(
+        'post_type' => 'post', // Adjust if needed
+    );
 
+    // Add search query to arguments if present
     if (!empty($search_query)) {
-        $args['s'] = $search_query; // Add search query to arguments
+        $args['s'] = $search_query;
+    } else {
+        // If no search query, optionally adjust to not display all posts automatically
+        // $args['posts_per_page'] = -1; // Uncomment this to show all posts when not searching
     }
 
     // The Query
     $query = new WP_Query($args);
 
     // The Loop
-    if ($query->have_posts()) :
+    if ($query->have_posts()) {
         while ($query->have_posts()) : $query->the_post(); ?>
             <div class="loop_single_post_title"><a class="loop_single_post_link" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></div>
         <?php endwhile;
-        // Restore original Post Data
-        wp_reset_postdata();
-    else :
-        // Display all posts if no search query
-        $args_all_posts = array(
-            'post_type' => 'post', // You can specify the post type you want to display
-            'posts_per_page' => -1, // -1 to show all posts
-        );
+    } else {
+        // Display a message if no posts found
+        echo ' ';
+    }
 
-        $query_all_posts = new WP_Query($args_all_posts);
-
-        if ($query_all_posts->have_posts()) :
-            while ($query_all_posts->have_posts()) : $query_all_posts->the_post(); ?>
-                <div class="loop_single_post_title"><a class="loop_single_post_link" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></div>
-            <?php endwhile;
-            // Restore original Post Data
-            wp_reset_postdata();
-        else :
-            // Display a message if no posts found
-            echo 'No posts found';
-        endif;
-    endif;
+    // Restore original Post Data
+    wp_reset_postdata();
     ?>
 </div>
+
 
 <div id="bar_footer">
     <div class="subtitle_footer">
@@ -81,28 +73,29 @@
     </div>
     <div class="counter_header">
         <?php
-        // Check if there is a search query
-        $search_query = get_search_query();
-        $args = array();
-
-        if (!empty($search_query)) {
-            $args['s'] = $search_query; // Add search query to arguments
+        // Initialize query for counting total posts only if needed
+        if (!isset($total_posts)) {
+            $total_posts = wp_count_posts()->publish; // Total published posts
         }
 
-        // The Query
-        $query = new WP_Query($args);
-
-        // Get the total number of posts
-        $total_posts = wp_count_posts()->publish;
-
-        if ($query->have_posts()) :
-            $displayed_posts = $query->found_posts;
-            echo "<span id='displayed-posts' class='displayed-posts'>$displayed_posts/</span><span id='total-posts' class='total-posts'>$total_posts</span>";
-        else :
-            // If no search query, display all posts
+        // Check if there is a search query
+        $search_query = get_search_query();
+        if (!empty($search_query)) {
+            // The Query for search results
+            $args = array(
+                's' => $search_query, // Add search query to arguments
+                'post_type' => 'post',
+                'posts_per_page' => -1, // We need this to count matching posts only, won't actually fetch posts
+            );
+            $query = new WP_Query($args);
+            $displayed_posts = $query->found_posts; // Number of posts found matching the search query
+        } else {
+            // If no search query, all posts are considered as displayed
             $displayed_posts = $total_posts;
-            echo "<span id='displayed-posts' class='displayed-posts'>$displayed_posts/</span><span id='total-posts' class='total-posts'>$total_posts</span>";
-        endif;
+        }
+
+        // Display the counter
+        echo "<span id='displayed-posts' class='displayed-posts'>$displayed_posts/</span><span id='total-posts' class='total-posts'>$total_posts</span>";
         ?>
     </div>
 </div>
@@ -176,7 +169,7 @@ jQuery(document).ready(function ($) {
 
 
 <script>
-	jQuery(document).ready(function ($) {
+    jQuery(document).ready(function ($) {
     // Click event for the date div
     $('.switch').click(function () {
         var randomPostUrl = $(this).data('random-post-url');
